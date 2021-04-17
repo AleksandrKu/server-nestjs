@@ -39,8 +39,8 @@ export class QuotesService {
   }
 
   async findRandom(tag: string): Promise<Quote> {
-    let query = 'SELECT id FROM quote';
-    if (tag) query += ` WHERE '${tag}' = ANY (tags)`;
+    let query = `SELECT id FROM quote `;
+    if (tag) query += `WHERE text LIKE '%${tag}%' OR '${tag}' = ANY (tags)`;
     const idsObject = await this.quoteRepository.query(query);
     const ids = idsObject.map(item => item.id);
     const id = ids[Math.floor(Math.random() * ids.length)];
