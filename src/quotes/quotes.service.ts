@@ -1,18 +1,15 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, In, Raw } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateQuoteDto } from './dto/create-quote.dto';
 import { UpdateQuoteDto } from './dto/update-quote.dto';
 import * as fs from 'fs';
-import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { Quote } from './entities/quote.entity';
 
 const fsPromises = fs.promises;
-
 const pathToBaseQuotes = path.join(__dirname, 'database', 'quotes-base.json');
-const pathToDatabaseQuotes = path.join(__dirname, 'database', 'quotes.json');
 
 @Injectable()
 export class QuotesService {
