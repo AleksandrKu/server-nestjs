@@ -7,6 +7,7 @@ import { UpdateQuoteDto } from './dto/update-quote.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Quote } from './entities/quote.entity';
+const TABLE_QOUTE = 'quote';
 
 const fsPromises = fs.promises;
 const pathToBaseQuotes = path.join(__dirname, 'database', 'quotes-base.json');
@@ -32,12 +33,12 @@ export class QuotesService {
   }
 
   async findAll(): Promise<Quote[]> {
-    return await this.quoteRepository.find()
+    return await this.quoteRepository.find({ where: { isDeleted: false } })
   }
 
   async findRandom(tag: string): Promise<Quote> {
-    let query = `SELECT id FROM quote `;
-    if (tag) query += `WHERE text LIKE '%${tag}%' OR '${tag}' = ANY (tags)`;
+    let query = `SELECT id FROM ${TABLE_QOUTE} WHERE "isDeleted" is False`;
+    if (tag) query += ` AND ( text LIKE '%${tag}%' OR '${tag}' = ANY (tags) )`;
     const idsObject = await this.quoteRepository.query(query);
     const ids = idsObject.map(item => item.id);
     const id = ids[Math.floor(Math.random() * ids.length)];
@@ -60,10 +61,10 @@ export class QuotesService {
   }
 
   async remove(id: number) {
-    const quote = await this.quoteRepository.findOne(id);
+    const quote = await this.quoteRepository.findOne({ where: { id: id, isDeleted: false } });
     if (!quote) throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     quote.isDeleted = true;
-    const result = await this.quoteRepository.save(quote)
+    const result = await this.quoteRepository.save(quote);
     return result ? `Quote with id: ${id} deleted.` : `Can not delete quote id: ${id}.`;
   }
 }
