@@ -10,7 +10,7 @@ import { Quote } from './entities/quote.entity';
 const TABLE_QOUTE = 'quote';
 
 const fsPromises = fs.promises;
-const pathToBaseQuotes = path.join(__dirname, 'database', 'quotes-base.json');
+const pathToBaseQuotes = path.join(__dirname, '..', '..', 'quotes', 'database', 'quotes-base.json');
 
 @Injectable()
 export class QuotesService {
