@@ -6,7 +6,23 @@ database_file='users.db'
 database="${database_folder}/${database_file}";
 
 function help() {
-  echo "Help"
+text="$(cat <<-EOF
+  ./db.sh script support the following commands:
+
+  add - Adds a new line to the users.db (username – Latin letters only, role – Latin letters only)
+
+  backup - Creates a new file, named %timestamp%-users.db.backup which is a copy of current users.db
+  
+  restore - Takes last created backup file and replaces users.db with it
+
+  find -  Prompts user to type a username, then prints username and role if such exists in users.db
+
+  list - Prints contents of users.db in format: N. username, role
+
+  list inverse - Prints contents of users.db in format: N. username, role in an opposite order
+EOF
+)";
+echo "$text";
 }
 
 function readInput() {
