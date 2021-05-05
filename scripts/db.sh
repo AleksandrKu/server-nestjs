@@ -4,6 +4,7 @@ arg=$1
 database_folder='../data';
 database_file='users.db'
 database="${database_folder}/${database_file}";
+
 function help() {
   echo "Help"
 }
@@ -34,9 +35,9 @@ function add() {
     echo "No database! Do you want to create database? [y/n]";
     read is_create_file;
     if [[ "$is_create_file"  == "y" ]]; then
-      mkdir $database_folder;
+      mkdir -p $database_folder;
       touch $database;
-      echo "File was created.";
+      echo "Database was created.";
     else
       echo "Close script!";
       exit 0;  
@@ -50,10 +51,18 @@ function add() {
   readInput role;
 
   echo "$username, $role" >> $database;
+  echo "User was created!"
 }
 
 function backup() {
-  echo "Backup"
+  if [[ -f $database ]]; then
+    date=`date +"%m-%d-%y-%T"`;
+    backup_path="${database_folder}/${date}-users.db.backup";
+    cp  $database $backup_path;
+    echo "Backup was created.";
+  else
+    echo "No database for backup!";
+  fi
 }
 
 function restore() {
