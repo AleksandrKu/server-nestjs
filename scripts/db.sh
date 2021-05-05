@@ -103,7 +103,14 @@ function find() {
 }
 
 function list() {
-  echo "List"
+  timestamp=$(( `date +"%s%N"` / 1000000 ));
+  tempfile=temp-list-${timestamp}.txt;
+  grep -i -n '' $database | sed 's/:/. /g' > $tempfile;
+  if [[ "$1" == "inverse" ]]; then 
+    tac -r $tempfile;
+  else 
+    cat $tempfile;
+  fi
 }
 
 case  $arg in
@@ -113,7 +120,7 @@ backup) backup;;
 add) add;;
 restore) restore;;
 find) find;;
-list) list;;
+list) list $2;;
 *) echo "ERROR! No this command";;  
 esac
      
