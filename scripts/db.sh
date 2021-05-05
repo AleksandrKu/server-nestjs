@@ -1,9 +1,10 @@
-#! /bin/bash 
+#! /bin/bash -e
 
 arg=$1
 database_folder='../data';
 database_file='users.db'
 database="${database_folder}/${database_file}";
+
 function help() {
   echo "Help"
 }
@@ -34,12 +35,12 @@ function add() {
     echo "No database! Do you want to create database? [y/n]";
     read is_create_file;
     if [[ "$is_create_file"  == "y" ]]; then
-      mkdir $database_folder;
+      mkdir -p $database_folder;
       touch $database;
-      echo "File was created.";
+      echo "Database was created.";
     else
       echo "Close script!";
-      exit 0;  
+      exit;  
     fi
   fi
 
@@ -50,14 +51,38 @@ function add() {
   readInput role;
 
   echo "$username, $role" >> $database;
+  echo "User was created!"
 }
 
 function backup() {
-  echo "Backup"
+  if [[ -f $database ]]; then
+    date=`date +"%s"`;
+    backup_path="${database_folder}/${date}-users.db.backup";
+    cp  $database $backup_path;
+    echo "Backup was created.";
+  else
+    echo "No database for backup!";
+  fi
 }
 
 function restore() {
-  echo "Restore"
+  latest_timestamp=0;
+  for file in "${database_folder}"/*
+  do
+    timestamp=$( echo $file | awk '$1 ~ /[0-9]/ {print}' |  awk -F '/' '{print $3}' | awk -F '-' '{print $1}');
+    if [ "$timestamp" > "$latest_timestamp" ]; then 
+      latest_timestamp=$timestamp;
+    fi
+  done
+
+  if [ "$latest_timestamp" == 0 ]; then
+    echo "No backup file found";
+    exit;
+  fi
+
+  backup_path="${database_folder}/${latest_timestamp}-users.db.backup";
+  cp  $backup_path $database;
+  echo "Successful restore database.";
 }
 
 function find() {

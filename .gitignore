@@ -397,3 +397,6 @@ Temporary Items
 .env
 docker.env
 dist
+
+# database for bash script
+data/*
