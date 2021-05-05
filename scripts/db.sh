@@ -86,7 +86,20 @@ function restore() {
 }
 
 function find() {
-  echo "Find"
+  if [[ ! -f $database ]]; then
+    echo "No database!";
+    exit;
+  fi
+  echo 'Enter Username:';
+  readInput username;
+  timestamp=$(( `date +"%s%N"` / 1000000 ));
+  tempfile=temp-${timestamp}.txt;
+  grep -i -n $username $database | sed 's/:/. /g' > $tempfile;
+  if [ ! -s "$tempfile" ]; then 
+    echo "User not found";
+  fi
+  cat $tempfile;
+  rm $tempfile;
 }
 
 function list() {
