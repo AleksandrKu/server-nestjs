@@ -111,6 +111,7 @@ function list() {
   else 
     cat $tempfile;
   fi
+  rm $tempfile;
 }
 
 case  $arg in
